@@ -43,30 +43,42 @@ template<typename T>
 vector<T> add_using_crossover(vector<T> population, int size) // is it balanced? maybe rework for size != 12
 {
     // todo: T create_offspring(T t1, T t2), T create_creature()
-    int s = population.size();
-    while (population.size() < size) // add offsprings in the multiples of 8
+    int diff = size - population.size();
+    int mult = diff / 4;
+    int add = diff % 4;
+    
+    int best_count = mult;
+    int random_count = 2 * mult;
+    int entirely_new = mult;
+    if (add == 1)
     {
-        T offspring;
-        
-        for (int i = 0; i < 2; i++) // two children from best two creatures
-        {
-            offspring = create_offspring(population[0], population[1]);
-            population.push_back(offspring);
-        }
-        for (int i = 0; i < 4; i++) // four children from random two creatures
-        {
-            offspring = create_offspring(population[rand_int(s)], population[rand_int(s)]);
-            population.push_back(offspring);
-        }
-        for (int i = 0; i < 2; i++) // two completely random creatures
-        {
-            offspring = create_creature<T>();
-            population.push_back(offspring);
-        }
+        best_count++;
+    }
+    else if (add > 1)
+    {
+        best_count++;
+        random_count += add - 1;
     }
     
-    while (population.size() > size) // if too many creatures added, pop extra ones
-        population.pop_back();
+    T offspring;
+    for (int i = 0; i < best_count; i++)
+    {
+        offspring = create_offspring(population[0], population[1]);
+        population.push_back(offspring);
+    }
+    for (int i = 0; i < random_count; i++) // four children from random two creatures
+    {
+        offspring = create_offspring(population[rand_int(s)], population[rand_int(s)]);
+        population.push_back(offspring);
+    }
+    for (int i = 0; i < entirely_new; i++)
+    {
+        offspring = create_creature<T>();
+        population.push_back(offspring);
+    }
+    if (population.size() != size){
+        throw std::exception("population size changed");
+    }
     
     return population;
 }
