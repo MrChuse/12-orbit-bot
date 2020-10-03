@@ -1,3 +1,0 @@
-D:\Programs\CMake\bin\cmake.exe -E rm -f CMakeFiles\AI_project_cpp.dir/objects.a
-D:\Programs\Min-GW\mingw32\bin\ar.exe cr CMakeFiles\AI_project_cpp.dir/objects.a @CMakeFiles\AI_project_cpp.dir\objects1.rsp
-D:\Programs\Min-GW\mingw32\bin\g++.exe -Wl,--whole-archive CMakeFiles\AI_project_cpp.dir/objects.a -Wl,--no-whole-archive -o AI_project_cpp.exe -Wl,--out-implib,libAI_project_cpp.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\AI_project_cpp.dir\linklibs.rsp
