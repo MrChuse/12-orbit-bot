@@ -1,18 +1,23 @@
 #include<algorithm>
+#include<vector>
+using std::vector;
 
 const int TOTAL_GENERATIONS = 1000;
-const int POPULATION_SIZE = 12
+const int POPULATION_SIZE = 12;
 const float THRESHOLD = 4.0 / 12;
+
+class my_class{
+    int a = 10;
+};
 
 template<typename T>
 vector<T> generate_initial_population(int amount)
 {
-    // todo: T create_creature<T>()
+    // todo: implement T
     vector<T> population;
     for (int i = 0; i < amount; i++)
     {
-        auto creature = create_creature<T>();
-        population.push_back(creature);
+        population.push_back(T());
     }
     return population;
 }
@@ -95,12 +100,12 @@ void mutate(vector<T> population) // is it all? todo: T.mutate()
 int main()
 {
     // genetic algorithm
-    auto population = generate_initial_population();
+    auto population = generate_initial_population<my_class>();
     for(int generation = 0; generation < TOTAL_GENERATIONS; generation++)
     {
-        auto fitness_scores = get_fitness_scores(population);
-        population = select_best(population, fitness_scores, THRESHOLD);
-        population = add_using_crossover(population, THRESHOLD);
-        mutate(population);
+        auto fitness_scores = get_fitness_scores<my_class>(population);
+        population = select_best<my_class>(population, fitness_scores, THRESHOLD);
+        population = add_using_crossover<my_class>(population, THRESHOLD);
+        mutate<my_class>(population);
     }
 }

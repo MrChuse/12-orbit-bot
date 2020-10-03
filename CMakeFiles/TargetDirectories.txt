@@ -1,0 +1,3 @@
+D:/Games/12 orbits/AI project cpp/CMakeFiles/AI_project_cpp.dir
+D:/Games/12 orbits/AI project cpp/CMakeFiles/edit_cache.dir
+D:/Games/12 orbits/AI project cpp/CMakeFiles/rebuild_cache.dir
