@@ -1,111 +1,43 @@
-#include<algorithm>
-#include<vector>
-using std::vector;
+#include "main_func.h"
+#include <iostream>
+using std::cin;
+using std::cout;
+using std::endl;
 
-const int TOTAL_GENERATIONS = 1000;
+const int TOTAL_WINDOWS = 4;
+
+const int TOTAL_GENERATIONS = 0;
 const int POPULATION_SIZE = 12;
 const float THRESHOLD = 4.0 / 12;
-
-class my_class{
-    int a = 10;
-};
-
-template<typename T>
-vector<T> generate_initial_population(int amount)
-{
-    // todo: implement T
-    vector<T> population;
-    for (int i = 0; i < amount; i++)
-    {
-        population.push_back(T());
-    }
-    return population;
-}
-
-template<typename T> // todo: state has bool is_terminal and vector<int> scores
-vector<int> get_fitness_scores(vector<T> population)
-{
-    // todo: get_state(), get_actions(), execute
-    auto state = get_state();
-    while (!state.is_terminal)
-    {
-        auto actions = get_actions(population, state);
-        execute(actions);
-    }
-    return state.scores;
-}
-
-template<typename T>
-vector<T> select_best(vector<T> population, vector<int> fitness_scores, float threshold)
-{
-    // todo: operator< between T and T (used in sort)
-    std::sort(population.begin(), population.end());
-    threshold *= population.size();
-    return vector<T>(population.begin(), population.begin() + int(threshold));
-}
-
-template<typename T>
-vector<T> add_using_crossover(vector<T> population, int size) // is it balanced? maybe rework for size != 12
-{
-    // todo: T create_offspring(T t1, T t2), T create_creature()
-    int diff = size - population.size();
-    int mult = diff / 4;
-    int add = diff % 4;
-    
-    int best_count = mult;
-    int random_count = 2 * mult;
-    int entirely_new = mult;
-    if (add == 1)
-    {
-        best_count++;
-    }
-    else if (add > 1)
-    {
-        best_count++;
-        random_count += add - 1;
-    }
-    
-    T offspring;
-    for (int i = 0; i < best_count; i++)
-    {
-        offspring = create_offspring(population[0], population[1]);
-        population.push_back(offspring);
-    }
-    for (int i = 0; i < random_count; i++) // four children from random two creatures
-    {
-        offspring = create_offspring(population[rand_int(s)], population[rand_int(s)]);
-        population.push_back(offspring);
-    }
-    for (int i = 0; i < entirely_new; i++)
-    {
-        offspring = create_creature<T>();
-        population.push_back(offspring);
-    }
-    if (population.size() != size){
-        throw std::exception("population size changed");
-    }
-    
-    return population;
-}
-
-template<typename T>
-void mutate(vector<T> population) // is it all? todo: T.mutate()
-{
-    for (int i = 0; i < population.size(); i++)
-    {
-        population[i].mutate();
-    }
-}
 
 int main()
 {
     // genetic algorithm
-    auto population = generate_initial_population<my_class>();
+    //cout << 'a' << endl;
+    //vector<DWORD> exit_codes;
+    //for (int i = 0; i < TOTAL_WINDOWS; i++){
+    //    exit_codes.push_back(initialize_window());
+    //}
+    
+    prepare_windows();
+    
+    auto population = generate_initial_population<my_class>(POPULATION_SIZE);
+    //cout << 'c' << endl;
     for(int generation = 0; generation < TOTAL_GENERATIONS; generation++)
     {
         auto fitness_scores = get_fitness_scores<my_class>(population);
         population = select_best<my_class>(population, fitness_scores, THRESHOLD);
-        population = add_using_crossover<my_class>(population, THRESHOLD);
-        mutate<my_class>(population);
+        population = add_using_crossover<my_class>(population, POPULATION_SIZE);
+        population = mutate<my_class>(population);
+        for (auto el : population){
+            cout << el.a << endl;
+        }
+        cout << endl;
     }
+    
+    //cout << 'd' << endl;
+    //for (int i = 0; i < TOTAL_WINDOWS; i++){
+    //    destroy_game(exit_codes[i]);
+    //}
+    return 0;
 }
