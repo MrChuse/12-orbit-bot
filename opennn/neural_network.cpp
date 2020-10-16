@@ -86,7 +86,6 @@ NeuralNetwork::NeuralNetwork(const Tensor<Layer*, 1>& new_layers_pointers)
 NeuralNetwork::~NeuralNetwork()
 {
     const Index layers_number = get_layers_number();
-
     for(Index i = 0;  i < layers_number; i++)
     {
         delete layers_pointers[i];

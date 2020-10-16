@@ -34,3 +34,5 @@ if(OpenNN_BUILD_EXAMPLES)
 endif(OpenNN_BUILD_EXAMPLES)
 
 include(CPack)
+
+add_subdirectory(blank)

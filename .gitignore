@@ -15,8 +15,6 @@ pip-selfcheck.json
 .AppleDouble
 .LSOverride
 
-#Blank
-/blank/main.cpp
 
 # Icon must end with two \r
 Icon
@@ -229,3 +227,26 @@ Makefile*
 
 
 # Created by .ignore support plugin (hsz.mobi)
+
+
+# Visual studio, manual
+*.db
+*.cmake
+CMakeFiles/
+*.rule
+*.ipch
+*.c
+*.recipe
+*.tlog
+*.lastbuildstate
+*.user
+*.stamp
+*.depend
+*xml
+*.log
+*.txt
+!CMakeLists.txt
+*.csv
+*.list
+*.bin
+
