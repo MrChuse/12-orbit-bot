@@ -1,4 +1,4 @@
-Дшееду зкщоусе гыштп ЩзутТТ
+Little project using OpenNN
 
 <div align="center">
   <img src="http://www.opennn.net/images/opennn_git_logo.svg">
