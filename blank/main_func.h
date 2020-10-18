@@ -4,32 +4,22 @@
 #include <algorithm>
 #include <vector>
 #include <iostream>
+#include <map>
+#include <tuple>
 #include "send_event.h"
+#include "screenshot.h"
+#include "my_brain.h"
+
 
 using std::vector;
+using std::map;
+using std::tuple;
 using std::cout;
 using std::endl;
 
 int rand_int(int max)
 {
     return rand() % max;
-}
-
-class my_class
-{
-public:
-    int a;
-    my_class(int b = 10) {
-        a = b;
-    }
-    void mutate() {
-        a += rand_int(5) - 2;
-    }
-};
-
-bool operator<(const my_class& mc1, const my_class& mc2)
-{
-    return mc1.a < mc2.a;
 }
 
 struct State
@@ -110,13 +100,14 @@ void destroy_game(DWORD lpExitCode)
 */
 
 
-void prepare_windows()
+vector<int> prepare_windows()
 {
     // Click 4 Play! buttons
-    vector<vector<int>> args = { {900, 340, 350, 50},
-                                {900, 340, 1350, 50},
-                                {900, 340, 350, 500},
-                                {900, 340, 1350, 500} };
+    vector<vector<int>> args = { {900, 340, 310, 50},
+                                {900, 340, 1050, 50},
+                                {900, 340, 310, 490},
+                                {900, 340, 1050, 490} };
+    vector<int> player_color;
     for (auto el : args)
     {
         // Play!
@@ -150,26 +141,58 @@ void prepare_windows()
         {
             key_press(c);
         }
+        Sleep(1000);
+
+        auto matrix = ScreenCap(0, 0, 1920, 1080);
+        int dw = 288;
+        int dh = 28;
+
+        map<tuple<int, int, int>, int> m; // map from colors to color_id
+        m[{255,   0, 255}] = 0; // pink
+        m[{ 62,  80, 255}] = 1; // light blue
+        m[{  0, 170,   0}] = 2; // light green
+        m[{255,  66,   0}] = 3; // vermillion
+        m[{142,  70, 173}] = 4; // violet
+        m[{  0, 160, 160}] = 5; // cyan
+        m[{190,   0,   0}] = 6; // dark red
+        m[{255, 130,   0}] = 7; // orange
+        m[{ 70,   0, 148}] = 8; // dark indigo
+        m[{128,  64,  64}] = 9; // brown
+        m[{150, 125,   0}] = 10;// gold
+        m[{ 25,  93,  42}] = 11;// dark green
+
+        for (int w = 0; w < 2; w++) 
+        {
+            for (int h = 0; h < 6; h++) 
+            {
+                color c = matrix[750 + dw * w][435 + dh * h];
+                player_color.push_back(m[{c.r, c.g, c.b}]);
+
+            }
+        }
+
 
         lmb_drag(el[0], el[1], el[2], el[3]);
         Sleep(150);
     }
+
+    return player_color;
 }
 
-template<typename T>
-vector<T> generate_initial_population(int amount)
+vector<MyBrain*> generate_initial_population(int amount, vector<int> player_color)
 {
-    vector<T> population;
+    vector<MyBrain*> population;
+    cout << "player_color size: " << player_color.size() << endl;
     for (int i = 0; i < amount; i++)
     {
-        int param = rand_int(10);
-        population.push_back(T(param));
+        cout << i << ": " << player_color[i] << endl;
+        population.push_back(new MyBrain(player_color[i]));
     }
     return population;
 }
 
 template<typename T> // todo: state has bool is_terminal and vector<int> scores
-vector<int> get_fitness_scores(vector<T> population)
+void get_fitness_scores(vector<T> population)
 {
     // todo: get_state(), get_actions(), execute
     auto state = get_state();
@@ -179,14 +202,17 @@ vector<int> get_fitness_scores(vector<T> population)
         execute(actions);
         state = get_state();
     }
-    return state.scores;
+    for (int i = 0; i < population.size(); i++)
+    {
+        population[i]->fitness_score = state.scores[i];
+    }
 }
 
 template<typename T>
-vector<T> select_best(vector<T> population, vector<int> fitness_scores, float threshold)
+vector<T> select_best(vector<T> population, float threshold)
 {
     // todo: operator< between T and T (used in sort)
-    std::sort(population.begin(), population.end(), [](T a, T b) {return b < a; });
+    std::sort(population.begin(), population.end(), [](T a, T b) {return b->fitness_score < a->fitness_score; });
     threshold *= population.size();
     return vector<T>(population.begin(), population.begin() + int(threshold));
 }
@@ -234,7 +260,7 @@ template<typename T>
 vector<T> mutate(vector<T> population) // is it all? todo: T.mutate()
 {
     for (size_t i = 0; i < population.size(); i++)
-        population[i].mutate();
+        population[i]->mutate();
     return population;
 }
 

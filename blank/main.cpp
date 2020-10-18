@@ -24,7 +24,7 @@ using OpenNN::Tensor;*/
 const int TOTAL_WINDOWS = 4;
 
 const int TOTAL_GENERATIONS = 0;
-const int POPULATION_SIZE = 12;
+const int POPULATION_SIZE = 12 * TOTAL_WINDOWS;
 const float THRESHOLD = 4.0 / 12;
 
 int main()
@@ -37,31 +37,38 @@ int main()
     //    exit_codes.push_back(initialize_window());
     //}
 
-
+    
     cout << "Windows are moving" << endl;
-    //prepare_windows();
+    auto player_color = prepare_windows();
     cout << "Moved windows successfully" << endl << endl;
 
-    auto population = generate_initial_population<my_class>(POPULATION_SIZE);
+    vector<MyBrain*> population = generate_initial_population(POPULATION_SIZE, player_color);
     cout << "Generated population successfully" << endl << "Starting learning" << endl;
 
     for (int generation = 0; generation < TOTAL_GENERATIONS; generation++)
     {
-        auto fitness_scores = get_fitness_scores<my_class>(population);
-        population = select_best<my_class>(population, fitness_scores, THRESHOLD);
-        population = add_using_crossover<my_class>(population, POPULATION_SIZE);
-        population = mutate<my_class>(population);
+        get_fitness_scores<MyBrain*>(population);
+        population = select_best<MyBrain*>(population, THRESHOLD);
+        population = add_using_crossover<MyBrain*>(population, POPULATION_SIZE);
+        population = mutate<MyBrain*>(population);
         for (auto el : population) {
-            cout << el.a << endl;
+            cout << el->fitness_score << endl;
         }
         cout << endl;
     }
     cout << "Learning ended" << endl;
-    auto matrix = ScreenCap(100, 500, 300, 400); // vector<vector<color>>
 
-    MyBrain b;
+    for (auto el : population)
+    {
+        delete el;
+    }
+    
 
-    for (int i = 0; i < 1000; i++)
+    /*auto matrix = ScreenCap(100, 500, 300, 400); // vector<vector<color>>
+
+    MyBrain b(1);
+
+    for (int i = 0; i < 1; i++)
     {
         matrix = ScreenCap(100, 500, 300, 400);
         Tensor<float, 2> inp(1, 10);
@@ -75,7 +82,7 @@ int main()
         cout << "iteration" << i << endl << ans << endl << endl;
         
     }
-    cout << matrix.size() << ' ' << matrix[0].size() << endl;
+    cout << matrix.size() << ' ' << matrix[0].size() << endl;*/
     cout << "The project ended successfully" << endl;
     return 0;
 

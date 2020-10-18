@@ -31,7 +31,7 @@ inline int PosR(BYTE* ScreenData, int ScreenX, int x, int y)
     return ScreenData[4 * ((y * ScreenX) + x) + 2];
 }
 
-vector<vector<color>> ScreenCap(int x1, int y1, int x2, int y2)
+Tensor<Index, 3> ScreenCap(int x1, int y1, int x2, int y2)
 {
     
     int ScreenX = 0;
@@ -41,7 +41,7 @@ vector<vector<color>> ScreenCap(int x1, int y1, int x2, int y2)
     HDC hScreen = GetDC(NULL);
     ScreenX = GetDeviceCaps(hScreen, HORZRES);
     ScreenY = GetDeviceCaps(hScreen, VERTRES);
-    cout << 22 << endl;
+
     HDC hdcMem = CreateCompatibleDC(hScreen);
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, ScreenX, ScreenY);
     HGDIOBJ hOld = SelectObject(hdcMem, hBitmap);
@@ -60,20 +60,21 @@ vector<vector<color>> ScreenCap(int x1, int y1, int x2, int y2)
     if (ScreenData)
         free(ScreenData);
     ScreenData = (BYTE*)malloc(4 * ScreenX * ScreenY);
-    cout << 25 << endl;
+
     GetDIBits(hdcMem, hBitmap, 0, ScreenY, ScreenData, (BITMAPINFO*)&bmi, DIB_RGB_COLORS);
     
     ReleaseDC(GetDesktopWindow(), hScreen);
     DeleteDC(hdcMem);
     DeleteObject(hBitmap);
     
-    vector<vector<color>> matrix;
-    for (int i = 0; i < ScreenX; i++) {
-        vector<color> row;
-        for (int j = 0; j < ScreenY; j++) {
-            row.push_back(color{ PosR(ScreenData, ScreenX, i, j), PosG(ScreenData, ScreenX, i, j), PosB(ScreenData, ScreenX, i, j) });
+
+    Tensor<Index, 3> matrix(x2 - x1, y2 - y1, 3);
+    for (int i = x1; i < x2; i++) {
+        for (int j = y1; j < y2; j++) {
+            matrix(i, j, 0) = PosR(ScreenData, ScreenX, i, j);
+            matrix(i, j, 1) = PosG(ScreenData, ScreenX, i, j);
+            matrix(i, j, 2) = PosB(ScreenData, ScreenX, i, j);
         }
-        matrix.push_back(row);
     }
     free(ScreenData);
     return matrix;

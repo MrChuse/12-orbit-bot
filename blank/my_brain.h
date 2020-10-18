@@ -9,23 +9,33 @@ using OpenNN::type;
 using Eigen::Index;
 using Eigen::Tensor;
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 class MyBrain
 {
 public:
-    MyBrain(int conv_num = 1) : conv_num(conv_num)
-    {
-        Tensor<Index, 1> architecture(3);
-        architecture(0) = 3;
-        architecture(1) = 5;
-        architecture(2) = 1;
+    int fitness_score = -1;
 
-        nn = new NeuralNetwork(NeuralNetwork::Classification, architecture);
+    MyBrain(int color_id = -1, int conv_num = 1) : color_id(color_id), conv_num(conv_num)
+    {
+        Tensor<Index, 1> input_variables_dimensions(3);
+        input_variables_dimensions(0) = 3;
+        input_variables_dimensions(1) = 5;
+        input_variables_dimensions(2) = 1;
+
+        nn = new NeuralNetwork();
 
     }
 
     ~MyBrain()
     {
         delete nn;
+    }
+
+    void mutate() {
+        return;
     }
 
     int get_layers()
@@ -38,9 +48,11 @@ public:
         return nn->calculate_outputs(t);
     }
 
+
+
 private:
     NeuralNetwork* nn;
-
+    int color_id;
     int conv_num;
 };
 
